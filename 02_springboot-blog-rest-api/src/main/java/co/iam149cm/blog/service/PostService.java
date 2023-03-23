@@ -1,4 +1,8 @@
-package co.iam149cm.blog.service.impl;
+package co.iam149cm.blog.service;
 
-public class PostService {
+
+import co.iam149cm.blog.payload.PostDto;
+
+public interface PostService {
+    PostDto createPost(PostDto postDto);
 }
