@@ -2,6 +2,7 @@ package co.iam149cm.blog.controller;
 
 import co.iam149cm.blog.entity.Post;
 import co.iam149cm.blog.payload.PostDto;
+import co.iam149cm.blog.payload.PostResponse;
 import co.iam149cm.blog.service.PostService;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
@@ -29,8 +30,13 @@ public class PostController {
 
     // get all posts rest api
     @GetMapping
-    public List<PostDto> getAllPosts() {
-        return postService.getAllPosts();
+    public PostResponse getAllPosts(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
+    ) {
+        return postService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
     }
 
     // get post by Id
