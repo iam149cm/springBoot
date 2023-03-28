@@ -1,16 +1,16 @@
 package co.iam149cm.blog.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter // comments 를 가져오기 위해 @Data 에서 수정
 @AllArgsConstructor
 @NoArgsConstructor
+
 @Entity
 @Table(
         name = "posts",

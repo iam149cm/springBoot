@@ -98,7 +98,7 @@ public class PostServiceImpl implements PostService {
     // convert Entity into Dto
     private PostDto mapToDTO(Post post) {
 
-        // 아래 코드가 주석처리 한 코드를 대체한다 - mapper.map(source, destination)
+        // 아래 코드가 주석처리 한 아래의 코드를 대체한다 - mapper.map(source, destination)
         PostDto postDto = mapper.map(post, PostDto.class);
 
 //        PostDto postDto = new PostDto();
