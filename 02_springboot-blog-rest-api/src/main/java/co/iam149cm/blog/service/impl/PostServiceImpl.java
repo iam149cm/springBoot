@@ -6,12 +6,14 @@ import co.iam149cm.blog.payload.PostDto;
 import co.iam149cm.blog.payload.PostResponse;
 import co.iam149cm.blog.repository.PostRepository;
 import co.iam149cm.blog.service.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,10 +22,13 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
 
     private PostRepository postRepository;
+    private ModelMapper mapper;
 
-//    @Autowired // 생성자가 하나일 경우 생략 가능
-    public PostServiceImpl(PostRepository postRepository) {
+    // @Autowired - 생성자가 하나일 경우 생략 가능
+    // ModelMapper 를 사용하기 위해 Constructor 에 추가
+    public PostServiceImpl(PostRepository postRepository, ModelMapper mapper) {
         this.postRepository = postRepository;
+        this.mapper = mapper;
     }
 
     @Override
@@ -92,20 +97,26 @@ public class PostServiceImpl implements PostService {
 
     // convert Entity into Dto
     private PostDto mapToDTO(Post post) {
-        PostDto postDto = new PostDto();
-        postDto.setId(post.getId());
-        postDto.setTitle(post.getTitle());
-        postDto.setDescription(post.getDescription());
-        postDto.setContent(post.getContent());
+
+        // 아래 코드가 주석처리 한 코드를 대체한다 - mapper.map(source, destination)
+        PostDto postDto = mapper.map(post, PostDto.class);
+
+//        PostDto postDto = new PostDto();
+//        postDto.setId(post.getId());
+//        postDto.setTitle(post.getTitle());
+//        postDto.setDescription(post.getDescription());
+//        postDto.setContent(post.getContent());
         return postDto;
     }
 
     // convert Dto into Entity
     private Post mapToEntity(PostDto postDto) {
-        Post post = new Post();
-        post.setTitle(postDto.getTitle());
-        post.setDescription(postDto.getDescription());
-        post.setContent(postDto.getContent());
+        Post post = mapper.map(postDto, Post.class);
+
+//        Post post = new Post();
+//        post.setTitle(postDto.getTitle());
+//        post.setDescription(postDto.getDescription());
+//        post.setContent(postDto.getContent());
         return post;
     }
 
