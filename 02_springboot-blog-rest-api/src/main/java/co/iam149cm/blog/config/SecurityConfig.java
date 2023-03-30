@@ -43,12 +43,13 @@ public class SecurityConfig {
         // authenticate any request
         http.csrf().disable()
                 .authorizeHttpRequests((authorize) ->
-                        authorize.requestMatchers(HttpMethod.GET, "/api/**")
-                                .permitAll() // GET 메서드의 요청은 어느 사용자나 사용 가능
+                        // .permitAll 이 붙은 요청은 누구나 사용 가능
+                        authorize.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+                                .requestMatchers("/api/auth/**").permitAll()
                                 .anyRequest()
                                 .authenticated()
-                )
-                .httpBasic(Customizer.withDefaults());
+                );
+//                .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
