@@ -33,4 +33,9 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     // Comment entity 의 변수명
     private Set<Comment> comments = new HashSet<>();
+
+    // FetchType.LAZY - post 엔티티를 로드할 때 category 는 즉시 로드되지 않는다. get category 메서드를 쓰면 가능
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
