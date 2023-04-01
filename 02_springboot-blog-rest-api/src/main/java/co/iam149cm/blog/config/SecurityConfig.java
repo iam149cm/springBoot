@@ -53,6 +53,8 @@ public class SecurityConfig {
                         // .permitAll 이 붙은 요청은 누구나 사용 가능
                         authorize.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                                 .requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers("/swagger-ui/**").permitAll()
+                                .requestMatchers("/v3/api-docs/**").permitAll()
                                 .anyRequest()
                                 .authenticated()
                 ).exceptionHandling(exception -> exception
