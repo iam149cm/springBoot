@@ -5,6 +5,8 @@ import co.iam149cm.blog.payload.PostDto;
 import co.iam149cm.blog.payload.PostResponse;
 import co.iam149cm.blog.service.PostService;
 import co.iam149cm.blog.utils.AppConstants;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,7 @@ public class PostController {
     // create blog post
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')") // only ADMIN can create post
+    @SecurityRequirement(name = "Bear Authentication") // SecurityConfig.java 에서 설정한 스키마 이름
     public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
@@ -52,6 +55,7 @@ public class PostController {
     // update post by Id
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "Bear Authentication")
     public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto,
                                               @PathVariable(name="id") long id) {
         PostDto postResponse =  postService.updatePost(postDto, id);
@@ -61,6 +65,7 @@ public class PostController {
     // delete post by Id
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "Bear Authentication")
     public ResponseEntity<String> deletePost(@PathVariable(name="id") long id){
         postService.deletePostById(id);
         return new ResponseEntity<>("Post entity deleted successfully", HttpStatus.OK);
