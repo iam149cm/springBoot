@@ -1,9 +1,11 @@
 package co.iam149cm.blog.service.impl;
 
+import co.iam149cm.blog.entity.Category;
 import co.iam149cm.blog.entity.Post;
 import co.iam149cm.blog.exception.ResourceNotFoundException;
 import co.iam149cm.blog.payload.PostDto;
 import co.iam149cm.blog.payload.PostResponse;
+import co.iam149cm.blog.repository.CategoryRepository;
 import co.iam149cm.blog.repository.PostRepository;
 import co.iam149cm.blog.service.PostService;
 import org.modelmapper.ModelMapper;
@@ -24,18 +26,26 @@ public class PostServiceImpl implements PostService {
     private PostRepository postRepository;
     private ModelMapper mapper;
 
+    private CategoryRepository categoryRepository;
+
     // @Autowired - 생성자가 하나일 경우 생략 가능
     // ModelMapper 를 사용하기 위해 Constructor 에 추가
-    public PostServiceImpl(PostRepository postRepository, ModelMapper mapper) {
+    public PostServiceImpl(PostRepository postRepository, ModelMapper mapper,
+                           CategoryRepository categoryRepository) {
         this.postRepository = postRepository;
         this.mapper = mapper;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
     public PostDto createPost(PostDto postDto) {
 
+        Category category = categoryRepository.findById(postDto.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", postDto.getCategoryId()));
+
         // convert DTO to entity
         Post post = mapToEntity(postDto);
+        post.setCategory(category);
         Post newPost = postRepository.save(post); // DB 에 save
 
         // convert entity to DTO - to use as response
