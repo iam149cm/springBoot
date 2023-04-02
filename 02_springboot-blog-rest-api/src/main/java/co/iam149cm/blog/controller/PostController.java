@@ -2,6 +2,7 @@ package co.iam149cm.blog.controller;
 
 import co.iam149cm.blog.entity.Post;
 import co.iam149cm.blog.payload.PostDto;
+import co.iam149cm.blog.payload.PostDtoV2;
 import co.iam149cm.blog.payload.PostResponse;
 import co.iam149cm.blog.service.PostService;
 import co.iam149cm.blog.utils.AppConstants;
@@ -11,16 +12,18 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.apache.coyote.Response;
+import org.apache.tomcat.util.digester.ArrayStack;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping
 @Tag(name = "CRUD REST APIs for Post Resource")
 public class PostController {
 
@@ -31,7 +34,7 @@ public class PostController {
     }
 
     // create blog post
-    @PostMapping
+    @PostMapping("/api/v1/posts")
     @PreAuthorize("hasRole('ADMIN')") // only ADMIN can create post
     @SecurityRequirement(name = "Bear Authentication") // SecurityConfig.java 에서 설정한 스키마 이름
     @Operation(summary = "Create Post REST API", description = "Create Post REST API is used to save post into database")
@@ -41,7 +44,7 @@ public class PostController {
     }
 
     // get all posts rest api
-    @GetMapping
+    @GetMapping("/api/v1/posts")
     @Operation(summary = "Get All Post REST API", description = "Fetch all Post from the database")
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     public PostResponse getAllPosts(
@@ -54,15 +57,35 @@ public class PostController {
     }
 
     // get post by Id
-    @GetMapping("/{id}")
+    @GetMapping("/api/v1/posts/{id}")
     @Operation(summary = "Get Post by id REST API", description = "Get single Post from the database")
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
-    public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") long id){
+    public ResponseEntity<PostDto> getPostByIdV1(@PathVariable(name = "id") long id){
         return ResponseEntity.ok(postService.getPostById(id));
     }
 
+    // get post by Id
+    @GetMapping("/api/v2/posts/{id}")
+    @Operation(summary = "Get Post by id REST API", description = "Get single Post from the database")
+    @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
+    public ResponseEntity<PostDtoV2> getPostByIdV2(@PathVariable(name = "id") long id){
+        PostDto postDto = postService.getPostById(id);
+        PostDtoV2 postDtoV2 = new PostDtoV2();
+        postDtoV2.setTitle(postDto.getTitle());
+        postDtoV2.setDescription(postDto.getDescription());
+        postDtoV2.setContent(postDtoV2.getContent());
+
+        List<String> tags = new ArrayList<>();
+        tags.add("Java");
+        tags.add("Spring Boot");
+        tags.add("AWS");
+        postDtoV2.setTags(tags);
+
+        return ResponseEntity.ok(postDtoV2);
+    }
+
     // update post by Id
-    @PutMapping("/{id}")
+    @PutMapping("/api/v1/posts/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "Bear Authentication")
     @Operation(summary = "Update Post REST API", description = "Update a particular Post in the database")
@@ -74,7 +97,7 @@ public class PostController {
     }
 
     // delete post by Id
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/api/v1/posts/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "Bear Authentication")
     @Operation(summary = "Delete Post REST API", description = "Delete a particular Post in the database")
