@@ -54,7 +54,8 @@ public class PostController {
 
     // get post by Id
 //    @GetMapping(value = "/{id}", params = "version=1") // versioning through query params
-    @GetMapping(value = "/{id}", headers = "X-API-VERSION=1") // versioning through the custom headers
+//    @GetMapping(value = "/{id}", headers = "X-API-VERSION=1") // versioning through the custom headers
+    @GetMapping(value = "/{id}", produces = "application/vnd.iam149cm.v1+json") // versioning through the content negotiation
     @Operation(summary = "Get Post by id REST API", description = "Get single Post from the database")
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     public ResponseEntity<PostDto> getPostByIdV1(@PathVariable(name = "id") long id){
@@ -63,7 +64,8 @@ public class PostController {
 
     // get post by Id
 //    @GetMapping(value = "/{id}", params = "version=2") // versioning through query params
-    @GetMapping(value = "/{id}", headers = "X-API-VERSION=2") // versioning through the custom headers
+//    @GetMapping(value = "/{id}", headers = "X-API-VERSION=2") // versioning through the custom headers
+    @GetMapping(value = "/{id}", produces = "application/vnd.iam149cm.v2+json") // versioning through the content negotiation
     @Operation(summary = "Get Post by id REST API", description = "Get single Post from the database")
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     public ResponseEntity<PostDtoV2> getPostByIdV2(@PathVariable(name = "id") long id){
