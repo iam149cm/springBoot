@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping
 @Tag(name = "CRUD REST APIs for Post Resource")
 public class PostController {
 
@@ -30,7 +30,7 @@ public class PostController {
     }
 
     // create blog post
-    @PostMapping
+    @PostMapping("/api/v1/posts")
     @PreAuthorize("hasRole('ADMIN')") // only ADMIN can create post
     @SecurityRequirement(name = "Bear Authentication") // SecurityConfig.java 에서 설정한 스키마 이름
     @Operation(summary = "Create Post REST API", description = "Create Post REST API is used to save post into database")
@@ -40,7 +40,7 @@ public class PostController {
     }
 
     // get all posts rest api
-    @GetMapping
+    @GetMapping("/api/v1/posts")
     @Operation(summary = "Get All Post REST API", description = "Fetch all Post from the database")
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     public PostResponse getAllPosts(
@@ -52,20 +52,22 @@ public class PostController {
         return postService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
     }
 
-    // get post by Id
+    // get post by Id (V1)
+    @GetMapping(value = "/api/v1/posts/{id}") // versioning through uri path - the post popular strategy
 //    @GetMapping(value = "/{id}", params = "version=1") // versioning through query params
 //    @GetMapping(value = "/{id}", headers = "X-API-VERSION=1") // versioning through the custom headers
-    @GetMapping(value = "/{id}", produces = "application/vnd.iam149cm.v1+json") // versioning through the content negotiation
+//    @GetMapping(value = "/{id}", produces = "application/vnd.iam149cm.v1+json") // versioning through the content negotiation
     @Operation(summary = "Get Post by id REST API", description = "Get single Post from the database")
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     public ResponseEntity<PostDto> getPostByIdV1(@PathVariable(name = "id") long id){
         return ResponseEntity.ok(postService.getPostById(id));
     }
 
-    // get post by Id
+    // get post by Id (V2)
+    @GetMapping(value = "/api/v2/posts/{id}") // versioning through uri path
 //    @GetMapping(value = "/{id}", params = "version=2") // versioning through query params
 //    @GetMapping(value = "/{id}", headers = "X-API-VERSION=2") // versioning through the custom headers
-    @GetMapping(value = "/{id}", produces = "application/vnd.iam149cm.v2+json") // versioning through the content negotiation
+//    @GetMapping(value = "/{id}", produces = "application/vnd.iam149cm.v2+json") // versioning through the content negotiation
     @Operation(summary = "Get Post by id REST API", description = "Get single Post from the database")
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     public ResponseEntity<PostDtoV2> getPostByIdV2(@PathVariable(name = "id") long id){
@@ -86,7 +88,7 @@ public class PostController {
     }
 
     // update post by Id
-    @PutMapping("/{id}")
+    @PutMapping("/api/v1/posts/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "Bear Authentication")
     @Operation(summary = "Update Post REST API", description = "Update a particular Post in the database")
@@ -98,7 +100,7 @@ public class PostController {
     }
 
     // delete post by Id
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/api/v1/posts/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "Bear Authentication")
     @Operation(summary = "Delete Post REST API", description = "Delete a particular Post in the database")

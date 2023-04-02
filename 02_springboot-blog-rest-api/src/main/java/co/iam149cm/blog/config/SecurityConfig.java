@@ -59,8 +59,9 @@ public class SecurityConfig {
         http.csrf().disable()
                 .authorizeHttpRequests((authorize) ->
                         // .permitAll 이 붙은 요청은 누구나 사용 가능
-                        authorize.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-                                .requestMatchers("/api/auth/**").permitAll()
+                        authorize.requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v2/**").permitAll()
+                                .requestMatchers("/api/v1/auth/**").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 .anyRequest()
