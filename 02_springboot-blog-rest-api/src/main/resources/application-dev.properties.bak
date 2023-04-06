@@ -1,8 +1,0 @@
-# DB Setting
-spring.datasource.url=jdbc:mysql://localhost:3306/blog
-spring.datasource.username=root
-spring.datasource.password=#Xilitol333
-
-# JPA Setting
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
-spring.jpa.hibernate.ddl-auto=update
