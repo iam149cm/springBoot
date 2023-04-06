@@ -9,6 +9,7 @@ import io.iam149cm.springboottransaction.repository.OrderRepository;
 import io.iam149cm.springboottransaction.repository.PaymentRepository;
 import io.iam149cm.springboottransaction.service.OrderService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -24,6 +25,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional // (rollbackFor = PaymentException.class)
     public OrderResponse placeOrder(OrderRequest orderRequest) {
 
         Order order = orderRequest.getOrder();
@@ -43,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
         orderResponse.setOrderTrackingNumber(order.getOrderTrackingNumber());
         orderResponse.setStatus(order.getStatus());
         orderResponse.setMessage("Order placed successfully");
-        
+
         return orderResponse;
     }
 }
