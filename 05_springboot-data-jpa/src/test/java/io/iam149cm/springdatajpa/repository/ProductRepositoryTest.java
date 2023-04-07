@@ -33,5 +33,18 @@ class ProductRepositoryTest {
         System.out.println(savedProduct.toString());
     }
 
+    @Test
+    void updateUsingSaveMethod() {
+        // find or retrieve product from database by id
+        long id = 1;
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
+        // update entity information
+        product.setName("iPhone 12 Pro");
+        product.setDescription("Apple iPhone 12 Pro");
+
+        // save entity to database
+        Product savedProduct = repository.save(product);
+    }
 }
