@@ -14,8 +14,17 @@ import java.time.LocalDateTime;
         }
 )
 public class Product {
+
+    // GenerationType.Auto: Hibernate will choose the best strategy for the underlying database.
+    // GenerationType.IDENTITY: The persistence provider must assign primary keys for the entity using a database identity column.
+    // GenerationType.SEQUENCE: The persistence provider must assign primary keys for the entity using a database sequence. - if the application is huge, sequence is recommended
+    // GenerationType.TABLE: The persistence provider must assign primary keys for the entity using an underlying database table to ensure uniqueness. - rarely used
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_generator")
+    @SequenceGenerator(name = "product_generator",
+    sequenceName = "product_sequence",
+    allocationSize = 1)
     private long id;
     @Column(name = "stock_keeping_unit", nullable = false) // customize column name
     private String sku;
