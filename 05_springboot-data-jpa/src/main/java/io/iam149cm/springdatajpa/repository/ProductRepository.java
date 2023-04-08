@@ -4,6 +4,7 @@ import io.iam149cm.springdatajpa.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +29,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
      */
     Product findDistinctByName(String name);
 
+    /**
+     * Returns a List of product entities which price is greater/less than the given search term.
+     */
+    List<Product> findByPriceGreaterThan(BigDecimal price);
+    List<Product> findByPriceLessThan(BigDecimal price);
 
 
 }
