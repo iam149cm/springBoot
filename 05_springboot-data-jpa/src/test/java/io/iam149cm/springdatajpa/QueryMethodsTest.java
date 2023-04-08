@@ -44,4 +44,11 @@ public class QueryMethodsTest {
         );
         products.forEach((p) -> System.out.println("👉 "+ p.toString()));
     }
+
+    @Test
+    void findDistinctByNameMethod() {
+        Product product = productRepository.findDistinctByName("iPhone 13 PRO");
+//        Product product = productRepository.findDistinctByName("iPhone 13 PRO MAX");
+        System.out.println("👉 "+ product.toString());
+    }
 }

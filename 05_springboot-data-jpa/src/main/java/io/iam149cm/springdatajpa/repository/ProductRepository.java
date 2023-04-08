@@ -23,6 +23,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByNameOrDescription(String name, String description);
     List<Product> findByNameAndDescription(String name, String description);
 
+    /** Returns a distinct product entity by using its name as search criteria.
+     * If no entity is found, this method returns null.
+     */
+    Product findDistinctByName(String name);
+
 
 
 }
