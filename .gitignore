@@ -1,11 +1,16 @@
 */HELP.md
+*/**/HELP.md
 */target/
+*/**/target/
 */Dockerfile
+*/**/Dockerfile
 !*/.mvn/wrapper/maven-wrapper.jar
+
 !*/**/src/main/**/target/
 !*/**/src/test/**/target/
-!*/**/src/main/**/**/target/
-!*/**/src/test/**/**/target/
+!*/**/**/src/main/**/target/
+!*/**/**/src/test/**/target/
+
 */**/src/main/resources/
 */**/**/src/main/resources/
 
