@@ -6,6 +6,7 @@ import io.iam149cm.employeeservice.dto.EmployeeDto;
 import io.iam149cm.employeeservice.entity.Employee;
 import io.iam149cm.employeeservice.exception.ResourceNotFoundException;
 import io.iam149cm.employeeservice.repository.EmployeeRepository;
+import io.iam149cm.employeeservice.service.APIClient;
 import io.iam149cm.employeeservice.service.EmployeeService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -22,7 +23,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
     private ModelMapper mapper;
 //    private RestTemplate restTemplate;
-    private WebClient webClient;
+//    private WebClient webClient;
+    private APIClient apiClient;
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -37,6 +39,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee", "id", id));
 
+        // 1. Using RestTemplate
 //        ResponseEntity<DepartmentDto> responseEntity =
 //                restTemplate.getForEntity(
 //                        "http://localhost:8080/api/departments/" + employee.getDepartmentCode(),
@@ -44,11 +47,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 //
 //        DepartmentDto departmentDto = responseEntity.getBody();
 
-        DepartmentDto departmentDto = webClient.get()
-                .uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
-                .retrieve()
-                .bodyToMono(DepartmentDto.class)
-                .block();
+        // 2. Using WebClient
+//        DepartmentDto departmentDto = webClient.get()
+//                .uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
+//                .retrieve()
+//                .bodyToMono(DepartmentDto.class)
+//                .block();
+
+        // 3. Using Feign Client
+        DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
 
         EmployeeDto employeeDto = mapToDto(employee);
 
