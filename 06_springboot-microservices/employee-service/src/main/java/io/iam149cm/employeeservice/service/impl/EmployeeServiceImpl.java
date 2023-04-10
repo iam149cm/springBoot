@@ -5,6 +5,8 @@ import io.iam149cm.employeeservice.entity.Employee;
 import io.iam149cm.employeeservice.repository.EmployeeRepository;
 import io.iam149cm.employeeservice.service.EmployeeService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,35 +15,29 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private EmployeeRepository employeeRepository;
 
+    private ModelMapper mapper;
+
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
-        Employee employee = new Employee(
-                employeeDto.getId(),
-                employeeDto.getFirstName(),
-                employeeDto.getLastName(),
-                employeeDto.getEmail()
-        );
-
+        Employee employee = mapToEntity(employeeDto);
         Employee savedEmployee = employeeRepository.save(employee);
-        EmployeeDto savedEmployeeDto = new EmployeeDto(
-                savedEmployee.getId(),
-                savedEmployee.getFirstName(),
-                savedEmployee.getLastName(),
-                savedEmployee.getEmail()
-        );
+        EmployeeDto savedEmployeeDto = mapToDto(savedEmployee);
         return savedEmployeeDto;
     }
 
     @Override
     public EmployeeDto getEmployeeById(Long id) {
         Employee employee = employeeRepository.findById(id).get();
-        EmployeeDto employeeDto = new EmployeeDto(
-                employee.getId(),
-                employee.getFirstName(),
-                employee.getLastName(),
-                employee.getEmail()
-        );
+        EmployeeDto employeeDto = mapToDto(employee);
         return employeeDto;
+    }
+
+    private EmployeeDto mapToDto(Employee employee) {
+        return mapper.map(employee, EmployeeDto.class);
+    }
+
+    private Employee mapToEntity(EmployeeDto employeeDto) {
+        return mapper.map(employeeDto, Employee.class);
     }
 }
