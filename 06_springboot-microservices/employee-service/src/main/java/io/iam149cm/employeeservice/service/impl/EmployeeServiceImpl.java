@@ -2,6 +2,7 @@ package io.iam149cm.employeeservice.service.impl;
 
 import io.iam149cm.employeeservice.dto.EmployeeDto;
 import io.iam149cm.employeeservice.entity.Employee;
+import io.iam149cm.employeeservice.exception.ResourceNotFoundException;
 import io.iam149cm.employeeservice.repository.EmployeeRepository;
 import io.iam149cm.employeeservice.service.EmployeeService;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDto getEmployeeById(Long id) {
-        Employee employee = employeeRepository.findById(id).get();
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee", "id", id));
         EmployeeDto employeeDto = mapToDto(employee);
         return employeeDto;
     }
