@@ -1,6 +1,7 @@
 package io.iam149cm.employeeservice.service.impl;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.iam149cm.employeeservice.dto.APIResponseDto;
 import io.iam149cm.employeeservice.dto.DepartmentDto;
 import io.iam149cm.employeeservice.dto.EmployeeDto;
@@ -11,6 +12,8 @@ import io.iam149cm.employeeservice.service.APIClient;
 import io.iam149cm.employeeservice.service.EmployeeService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Service
 @AllArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeServiceImpl.class);
 
     private EmployeeRepository employeeRepository;
     private ModelMapper mapper;
@@ -40,9 +45,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     * fallbackMethod는 CircuitBreaker가 동작할 때, 대신 호출되는 메서드이다.
     * CircuitBreaker가 동작하지 않았을 때, 정상적으로 호출된다.
     * */
-    @CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
+//    @CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
+    @Retry(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
     @Override
     public APIResponseDto getEmployeeById(Long id) {
+
+        LOGGER.info("👉 Inside getEmployeeById() of EmployeeServiceImpl");
+
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee", "id", id));
 
@@ -74,6 +83,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     public APIResponseDto getDefaultDepartment(Long id, Exception exception) { // CircuitBreaker가 동작할 때, 대신 호출되는 fallback 메서드
+
+        LOGGER.info("👉 Inside getDefaultDepartment() of EmployeeServiceImpl");
+
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee", "id", id));
 
