@@ -1,5 +1,6 @@
 package io.iam149cm.employeeservice.service.impl;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.iam149cm.employeeservice.dto.APIResponseDto;
 import io.iam149cm.employeeservice.dto.DepartmentDto;
 import io.iam149cm.employeeservice.dto.EmployeeDto;
@@ -34,6 +35,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         return savedEmployeeDto;
     }
 
+    /* Department 서비스가 다운되었을 때 500에러를 반환한다.
+    * 이때, CircuitBreaker가 동작하고, fallbackMethod를 호출한다.
+    * fallbackMethod는 CircuitBreaker가 동작할 때, 대신 호출되는 메서드이다.
+    * CircuitBreaker가 동작하지 않았을 때, 정상적으로 호출된다.
+    * */
+    @CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
     @Override
     public APIResponseDto getEmployeeById(Long id) {
         Employee employee = employeeRepository.findById(id)
@@ -56,6 +63,25 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         // 3. Using Feign Client
         DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
+
+        EmployeeDto employeeDto = mapToDto(employee);
+
+        APIResponseDto apiResponseDto = new APIResponseDto();
+        apiResponseDto.setEmployee(employeeDto);
+        apiResponseDto.setDepartment(departmentDto);
+
+        return apiResponseDto;
+    }
+
+    public APIResponseDto getDefaultDepartment(Long id, Exception exception) { // CircuitBreaker가 동작할 때, 대신 호출되는 fallback 메서드
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee", "id", id));
+
+        // set Default Department
+        DepartmentDto departmentDto = new DepartmentDto();
+        departmentDto.setDepartmentName("R&D Department");
+        departmentDto.setDepartmentCode("RD001");
+        departmentDto.setDepartmentDescription("Research and Development Department");
 
         EmployeeDto employeeDto = mapToDto(employee);
 
