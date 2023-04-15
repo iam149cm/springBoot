@@ -1,23 +1,20 @@
 package io.iam149cm.employeeservice.service.impl;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.iam149cm.employeeservice.dto.APIResponseDto;
 import io.iam149cm.employeeservice.dto.DepartmentDto;
 import io.iam149cm.employeeservice.dto.EmployeeDto;
+import io.iam149cm.employeeservice.dto.OrganizationDto;
 import io.iam149cm.employeeservice.entity.Employee;
 import io.iam149cm.employeeservice.exception.ResourceNotFoundException;
 import io.iam149cm.employeeservice.repository.EmployeeRepository;
-import io.iam149cm.employeeservice.service.APIClient;
+import io.iam149cm.employeeservice.service.DepartmentClient;
 import io.iam149cm.employeeservice.service.EmployeeService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
@@ -29,8 +26,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
     private ModelMapper mapper;
 //    private RestTemplate restTemplate;
-//    private WebClient webClient;
-    private APIClient apiClient;
+    private WebClient webClient;
+    private DepartmentClient departmentClient;
+
+
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -71,13 +70,23 @@ public class EmployeeServiceImpl implements EmployeeService {
 //                .block();
 
         // 3. Using Feign Client
-        DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
+        DepartmentDto departmentDto = departmentClient.getDepartment(employee.getDepartmentCode());
+
+
+        // Organization : using Webclient
+        OrganizationDto organizationDto = webClient.get()
+                .uri("http://localhost:8083/api/organizations/" + employee.getOrganizationCode())
+                .retrieve()
+                .bodyToMono(OrganizationDto.class)
+                .block();
+
 
         EmployeeDto employeeDto = mapToDto(employee);
 
         APIResponseDto apiResponseDto = new APIResponseDto();
         apiResponseDto.setEmployee(employeeDto);
         apiResponseDto.setDepartment(departmentDto);
+        apiResponseDto.setOrganization(organizationDto);
 
         return apiResponseDto;
     }

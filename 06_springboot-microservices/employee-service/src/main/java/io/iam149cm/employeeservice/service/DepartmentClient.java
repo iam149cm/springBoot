@@ -11,10 +11,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 // Feign Client 가 알아서 해당 서비스의 API 를 호출한다.
 // (Eureka Server 에 등록된 서비스만 가능하며 Eureka Client 에 내장된 로드밸런서 모듈로 로드밸런싱 한다)
 @FeignClient(name = "DEPARTMENT-SERVICE")
-public interface APIClient {
+public interface DepartmentClient {
 
     // copied from DepartmentController.java
     @GetMapping("/api/departments/{code}")
     DepartmentDto getDepartment(@PathVariable("code") String departmentCode);
 
 }
+
